@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cipher</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    button {
+      margin-right: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>GERMANIKUS Cipher</h2>
+  <p>Enter your message below:</p>
+  <textarea id="inputText"></textarea>
+  <br>
+  <button onclick="encrypt()">Encrypt</button>
+  <button onclick="decrypt()">Decrypt</button>
+
+  <div id="output"></div>
+
+  <script>
+    const keyword = "GERMANIKUS";
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    // Generate cipher alphabet based on GERMANIKUS
+    function generateCipherAlphabet() {
+      const seen = new Set();
+      const cipher = [];
+
+      for (let char of keyword.toUpperCase()) {
+        if (!seen.has(char)) {
+          cipher.push(char);
+          seen.add(char);
+        }
+      }
+
+      for (let char of alphabet) {
+        if (!seen.has(char)) {
+          cipher.push(char);
+        }
+      }
+
+      return cipher;
+    }
+
+    const cipherAlphabet = generateCipherAlphabet();
+
+    function encrypt() {
+      const text = document.getElementById("inputText").value.toUpperCase();
+      let result = [];
+
+      for (let char of text) {
+        if (/[A-Z]/.test(char)) {
+          const index = cipherAlphabet.indexOf(char) + 1;
+          result.push(index.toString().padStart(2, '0'));
+        } else {
+          result.push(char);
+        }
+      }
+
+      document.getElementById("output").innerText = "Encrypted:\n" + result.join(' ');
+    }
+
+    function decrypt() {
+      const text = document.getElementById("inputText").value;
+      const parts = text.trim().split(/[\s,]+/);
+      let result = "";
+
+      for (let part of parts) {
+        if (/^\d+$/.test(part)) {
+          const index = parseInt(part, 10) - 1;
+          if (index >= 0 && index < cipherAlphabet.length) {
+            result += cipherAlphabet[index];
+          } else {
+            result += "?";
+          }
+        } else {
+          result += part;
+        }
+      }
+
+      document.getElementById("output").innerText = "Decrypted:\n" + result;
+    }
+  </script>
+
+</body>
+</html>
